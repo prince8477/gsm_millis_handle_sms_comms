@@ -29,7 +29,7 @@ const char* wifi_key = "ab0ab1ab2a";
 
 
 int value = 0;
-
+unsigned long _websocketCounter=0;//websocket counter
 
 IPAddress ip(192, 168, 1, 114);
 IPAddress gateway(192, 168, 1, 254);
@@ -39,7 +39,6 @@ IPAddress subnet(255, 255, 255, 0);
 //Webserver
 ESP8266WebServer server(80);
 
-unsigned long _websocketCounter=0;//websocket counter
 //websocket
 ESP8266WiFiMulti wifiMulti;
 WebSocketsServer webSocket = WebSocketsServer(81);
