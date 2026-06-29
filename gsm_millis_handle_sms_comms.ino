@@ -19,8 +19,12 @@ const char* wifi_key = "ab0ab1ab2a";
 #include <ESP8266WiFiMulti.h>
 #include <WebSocketsServer.h>
 #include <WebSockets.h>
+/* Sofwtare serial */
+#include <SoftwareSerial.h>
+
 
 #include "html.h"
+#include "OTA.h"
 
 #define DEBUG 1
 #define BUFFER_SIZE 64
@@ -42,11 +46,6 @@ ESP8266WebServer server(80);
 //websocket
 ESP8266WiFiMulti wifiMulti;
 WebSocketsServer webSocket = WebSocketsServer(81);
-
-
-/* SOfwtare serial */
-#include <SoftwareSerial.h>
-//#include <String.h>
 
 #define D1 5
 #define D2 4
@@ -91,6 +90,9 @@ void setup() {
 
   InitWebsocket();
 
+    /* OTA*/ 
+   setupOTA( OTA_Name , wifi_ssid, wifi_key); 
+
   flash();
 }
 
@@ -107,6 +109,10 @@ void loop() {
    server.handleClient();
  //websocket     
   webSocket.loop(); //websocket 
+
+  //handle OTA request
+  ArduinoOTA.handle();
+
   delay(1);
 
 
@@ -199,9 +205,9 @@ void handleSMS(String sline){
 void flash(){
   for(int i=0;i<4;i++){
     digitalWrite(LED,HIGH); 
-    delay(500);
+    delay(250);
     digitalWrite(LED,LOW); 
-    delay(500);
+    delay(250);
   }
 }
 
