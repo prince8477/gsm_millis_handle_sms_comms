@@ -104,7 +104,7 @@ const char root[] PROGMEM = R"=====(
     }
     .ta_websock_tx{
       display:block;
-      width:80%;
+      width:300px;
       height:40px;
     }
       </style>
@@ -243,8 +243,7 @@ const char root[] PROGMEM = R"=====(
               var data="";
               var lines="";
               data = e;
-              let time_stamp=Date.now();
-              
+              let time_stamp=Date.now();              
               var textarea=document.getElementById("ta_websocket");
 
               console.log('websocket response');
@@ -252,12 +251,10 @@ const char root[] PROGMEM = R"=====(
               
               //Add timestamp thenscroll to bottom;
 
-              lines=textarea.value + time_stamp + '_'+ data;
+              lines=textarea.innerText + data;
               console.log(lines);
               
-              textarea.value=lines;
-
-              //document.getElementById("ta_websocket").innerText =sline;              
+              textarea.innerText=lines;                       
 
             }catch(err){
               //console.log("websockResponse.err=" + err);
