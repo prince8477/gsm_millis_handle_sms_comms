@@ -5,6 +5,47 @@
     
   LED/LED_BUILTIN= D8
 */
+
+// Update these with values suitable for your network.
+const char* wifi_ssid = "unifi";
+const char* wifi_key = "ab0ab1ab2a";
+
+//Webserver
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <WiFiClient.h>
+
+//Websockets
+#include <ESP8266WiFiMulti.h>
+#include <WebSocketsServer.h>
+#include <WebSockets.h>
+
+#include "html.h"
+
+#define DEBUG 1
+#define BUFFER_SIZE 64
+#define POST_INTERVALS 500
+#define OTA_Name "gsm_millis_handle_sms_comms"
+
+
+int value = 0;
+
+
+IPAddress ip(192, 168, 1, 114);
+IPAddress gateway(192, 168, 1, 254);
+IPAddress DNS(192, 168, 1, 254);
+IPAddress subnet(255, 255, 255, 0);
+
+//Webserver
+ESP8266WebServer server(80);
+
+unsigned long _websocketCounter=0;//websocket counter
+//websocket
+ESP8266WiFiMulti wifiMulti;
+WebSocketsServer webSocket = WebSocketsServer(81);
+
+
+/* SOfwtare serial */
 #include <SoftwareSerial.h>
 //#include <String.h>
 
@@ -40,8 +81,17 @@ void setup() {
   A6command("ATE0", "OK", "yy", 1000,1);
   A6command("AT+CLIP=1", "OK", "yy", 1000,1);             //Caller line display enabled
   A6command("AT+CNMI=1,2,0,0,0", "OK", "yy", 1000,1);     //SMS notification settings
-  Serial.println("System ready");    
-  
+   
+   A6command("AT+CMGF=1", "OK", "yy", 1000,1);     //SMS format
+
+  Serial.println("System ready");      
+
+  setup_wifi();
+
+  init_webserver();
+
+  InitWebsocket();
+
   flash();
 }
 
@@ -52,6 +102,15 @@ void loop() {
         previousTime=currentMillis;
         updateSerial();
    }
+
+
+ //webserver 
+   server.handleClient();
+ //websocket     
+  webSocket.loop(); //websocket 
+  delay(1);
+
+
 }
 /***********************************************************************************************************/
 void updateSerial(){           
@@ -79,9 +138,13 @@ void handleA6(){
     }
     
      
+
      Serial.print("Serial RCV from GSM module:");
      Serial.println(sline);             
  
+    //Send received messages to websock
+     webSocket.broadcastTXT(sline );  
+
     
     if(sline.indexOf("+CMT:")>-1){   handleSMS(sline);  } //New SMS
 }
@@ -213,5 +276,31 @@ byte splitWord(String inputWord,String lines[],char delimeter) {
   lines[counter]=sword;      
   
   return (byte)counter;
+}
+
+
+/*************************************************************************************/
+void _println(String line){sprintln(line); }
+/*************************************************************************************/
+void sprintln(String line){
+  if(DEBUG==0) return;
+  Serial.println(line);
+}
+
+/**************************************************************************************/
+void _print(String line){ sprint(line); }
+/*************************************************************************************/
+void sprint(String line){
+  if(DEBUG==0) return;
+  Serial.print(line);
+}
+
+//millis delay
+/*************************************************************************************/
+void _delay(int interval){
+  unsigned long prev=millis();    
+    while( millis() < prev + interval){
+      //Serial.print("..");
+    }  
 }
 
