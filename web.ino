@@ -4,6 +4,24 @@ void init_webserver(){
   server.begin();
   Serial.println("HTTP server started");     
     
+  server.on("/post",[]{
+       String data="";
+        data +="{";
+        data +="posted:manual";
+        data +="}";
+      
+      data=server.arg("data");
+
+      Serial.print("web/post=");
+      Serial.println(data);
+
+      //send received message to Software Serial
+      A6board.println(data + "\r\n");
+
+
+      server.send(200,"text/plain",data);
+  }); 
+
   server.on("/",[]{
        //server.send(200,"text/plain","esp8266_power-monitor V2..:" + GetJsonString() );
       SendHTML();

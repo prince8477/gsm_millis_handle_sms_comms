@@ -104,8 +104,8 @@ const char root[] PROGMEM = R"=====(
     }
     .ta_websock_tx{
       display:block;
-      width:inherit;
-      height:100px;
+      width:80%;
+      height:40px;
     }
       </style>
 
@@ -122,11 +122,11 @@ const char root[] PROGMEM = R"=====(
     </div>
       <!-- display received serail response -->
       <div class="div_container"> 
-          <textarea   
+          <input type='textbox'   
               id="ta_websocket_tx" 
-              rows="2"
-              cols="50"
-              class='ta_websock_tx'></textarea>
+              onkeyup="javascript:{  if (event.keyCode==13) {_post(); _clearTxTextbox();}}"              
+              class='ta_websock_tx' />               
+          <button  onclick="_post();"> _post()    </button>
       </div>
 
 
@@ -232,7 +232,7 @@ const char root[] PROGMEM = R"=====(
             };
 
 
-            
+
 
 
    /***********************************************************************************************/
@@ -277,6 +277,43 @@ const char root[] PROGMEM = R"=====(
                   document.getElementById("div_ws_value").innerHTML = e.data;
             };        
       }
+
+
+   /***********************************************************************************************/
+   function _post(){
+    console.log('js function.post() called');
+    
+    let textbox=document.getElementById("ta_websocket_tx");
+    let textValue;
+
+      textValue=encodeURIComponent(textbox.value);
+      //textValue="AT";
+      //textValue=textbox.value;
+
+    
+    console.log("textbox value:"+ textValue );
+
+      var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            console.log("fn:-post response :" + this.responseText );
+            //document.getElementById("div_ws_value").innerHTML = this.responseText;
+          }
+        };
+
+		    xhttp.open("GET", "/post?data=" + textValue , true);
+        xhttp.send();
+
+   }  
+  
+  /*********************************************************************************/
+   function _clearTxTextbox(){
+      let textbox=document.getElementById("ta_websocket_tx");
+        textbox.value="";
+        textbox.focus();
+        
+   }
+
      </script>
   </body>
    

@@ -24,7 +24,7 @@ const char* wifi_key = "ab0ab1ab2a";
 
 
 #include "html.h"
-#include "OTA.h"
+
 
 #define DEBUG 1
 #define BUFFER_SIZE 64
@@ -91,7 +91,7 @@ void setup() {
   InitWebsocket();
 
     /* OTA*/ 
-   setupOTA( OTA_Name , wifi_ssid, wifi_key); 
+   //setupOTA( OTA_Name , wifi_ssid, wifi_key); 
 
   flash();
 }
@@ -111,7 +111,7 @@ void loop() {
   webSocket.loop(); //websocket 
 
   //handle OTA request
-  ArduinoOTA.handle();
+  //ArduinoOTA.handle();
 
   delay(1);
 
